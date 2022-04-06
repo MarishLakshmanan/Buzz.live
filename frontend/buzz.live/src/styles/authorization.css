@@ -1,0 +1,131 @@
+.auth-container{
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right:0;
+    background-color: rgba(255, 255, 255, 0.555);
+    z-index: 50;
+}
+
+.auth-back{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: #232323;
+    width: 70%;
+    height: 70%;
+    border-radius: 60px;
+    display: flex;
+    padding: 20px;
+    align-content: space-between;
+}
+
+
+
+.login-container,.signup-container{
+    width: 50%;
+    display: block;
+}
+
+.login-container form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+    border-right: 5px solid black;
+}
+
+.signup-container form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-container form p,.signup-container form p{
+    color: rgb(0, 123, 255);
+    cursor: pointer;
+}
+
+.login-container h1,.signup-container h1{
+    color: #fff;
+    margin-left: 20px;
+}
+
+.login-container form label,.signup-container form label{
+    color: #fff;
+    align-items: flex-end;
+}
+
+.login-container form button,.signup-container form button{
+    background-color: #DA0037;
+    width: 65%;
+    border-radius: 30px;
+    padding: 10px 5px 10px;
+    font-family: "Poppins","san-serif";
+    font-weight: 700;
+    color: #fff;
+    font-size: 20px;
+    border: 0;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.login-container form input,.signup-container form input{
+    width: 80%;
+    border-radius: 10px;
+    padding:10px 5px 10px;
+    font-family: "Poppins","san-serif";
+    font-weight: 700;
+    font-size: 15px;
+    border: 0;
+    background-color: #333232;
+    color:#fff;
+    margin: 10px 0 10px;
+}
+
+.signup-container form img{
+    width: 150px;
+    height: 150px;
+    border-radius: 100px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.login-container form span,.signup-container form span{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media screen and (max-width:1000px) {
+    .login-container{
+        width: 100%;
+        display: block;
+    }
+
+    .login-container form{
+        border: 0;
+    }
+
+    .signup-container{
+        display: none;
+        width: 100%;
+    }
+
+    .auth-back{
+        width: 50%;
+        height: 80%;
+    }
+}
+
+@media  screen and (max-width:625px) {
+    .auth-back{
+        width: 80%;
+    }
+}

@@ -8,15 +8,18 @@ const io = require("socket.io")(server,{
         origin:["http://localhost:3000"]
     }
 });
-
+const { PeerServer } = require('peer');
+const peerServer = PeerServer({ port: 3001, path: '/' });
+const nodemailer = require("nodemailer");
 
 
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 5000;
 app.use(express.static("public"));
-const bcrypt = require('bcrypt');
+
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
+
+const ip="192.168.100.143"
 
 
 //Database Models
@@ -25,8 +28,14 @@ const Tokens = require("./public/models/tokenModel")
 const Rooms = require("./public/models/roomModel");
 const { Socket } = require("socket.io");
 
+
+// Importing functions
+
+const {signUp,login,authenticateJWT,checkToken,logout} = require("./public/functions/authorizationFunctions")
+
+
 //connecting Database
-mongoose.connect("mongodb://localhost:27017/test")
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.pcaad.mongodb.net/Buzz?retryWrites=true&w=majority`)
 
 
 //Using plugins for express
@@ -40,60 +49,50 @@ app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-const obj = {
-    name:"Marish",
-    age:20
-}
 
 
 //Routes
-app.get("/",authenticateJWT,(req,res)=>{
-    res.json({msg:"hola",user:req.user})
-});
 
-app.get("/check",(req,res)=>{
-    res.send("Hello world");
+
+
+app.get("/",(req,res)=>{
+    res.send("Hello there")
 })
-
 app.post("/login",login)
 
 app.post("/signUp",signUp)
 
-app.get("/token",(req,res)=>{
-    const authHeader = req.headers["authorization"];
-    const rtoken = authHeader.slice(7);
-    if(rtoken==null)return res.json({msg:"Login first"});
+app.get("/token",authenticateJWT,(req,res)=>{
+    res.json({msg:"hola",user:req.user})
+});
 
-    Tokens.findOne({rToken:rtoken},(err,data)=>{
-        if(data){
-            jwt.verify(rtoken,process.env.REFRESH_TOKEN,(err,user)=>{
-                const payload = {
-                    username:user.username,
-                    email:user.email
-                }
-                const atoken = jwt.sign(payload,process.env.ACCESS_TOKEN,{expiresIn:"30m"});
-                console.log("DOne");
-                res.json({msg:"Done",atoken:atoken})
-            })
-            
-        }
-    })
+app.get("/checkToken",checkToken)
 
-})
-
-app.get("/logout",(req,res)=>{
-    const authHeader = req.headers["authorization"];
-    const rtoken = authHeader.slice(7);
-    Tokens.deleteOne({rToken:rtoken}).then(()=>{
-        console.log("User Deleted");
-        res.json({msg:"Deleted"})
-    })
-})
+app.get("/logout",logout)
 
 app.get("/getRoom",(req,res)=>{
     Rooms.find({},(err,data)=>{
         res.json(data);
     })
+})
+
+app.post("/get-room-users/",(req,res)=>{
+    const roomID = req.body.roomID;
+    Rooms.findOne({roomID:roomID},(err,data)=>{
+        if(err) return console.log(err);
+        if(data.currentlyIn){
+            res.json(data.currentlyIn);
+        }else{
+            res.json([])
+            console.log("Nothing");
+        }
+    })
+})
+
+app.post("/add-room-user",(req,res)=>{
+    const uid = req.body.uid;
+    const roomID = req.body.roomID;
+    addUserToRoom(uid,roomID,res);
 })
 
 app.post("/createRoom",(req,res)=>{
@@ -109,10 +108,30 @@ app.post("/createRoom",(req,res)=>{
     })
 })
 
+app.post("/updateUser",(req,res)=>{
+    console.log("In here");
+    const userID= req.body.uID;
+    const name = req.body.name;
+    const email = req.body.email;
+    const img = req.body.img;
+
+    User.findOne({_id:userID},(err,data)=>{
+        if(err) return console.log("User not present");
+
+        if(data){
+            data.username = name;
+            data.email = email;
+            data.img = img;
+            data.save();
+            res.json({msg:"Success"})
+        }
+    })
+})
+
 //socket.io connections
 
 io.on("connection",(socket)=>{
-    socket.on("join-room",(roomID,userID)=>{
+    socket.on("join-room",(roomID,userID,uID)=>{
         socket.join(roomID);
         socket.to(roomID).emit("user-joined",userID);
 
@@ -129,14 +148,86 @@ io.on("connection",(socket)=>{
             socket.to(roomID).emit("recieve-message",msg);
         })
 
-        socket.on("send-board",(vis)=>{
-            socket.to(roomID).emit("recieve-board",vis);
+        socket.on("user-choice",(choice)=>{
+            socket.to(roomID).emit("user-choice",choice);
         })
+
+        socket.on("video-mute",(muted,userID)=>{
+            socket.to(roomID).emit("video-mute",muted,userID);
+        })
+
         socket.on("disconnect",()=>{
+            console.log("disconnect");
+            removeUserId(uID,roomID);
             socket.to(roomID).emit("user-leaved",userID);
         })
     })
 })
+
+function addUserToRoom(uID,roomID,res){
+
+    Rooms.findOne({roomID:roomID},(err,data)=>{
+        if(err) {
+            return res.json({msg:"room-is-not-there"})
+        }
+        var userIsNotThere = true;
+        if(data){
+            
+            var arr = data.currentlyIn;
+
+            console.log(arr.length,parseInt(data.npeople));
+
+            if(arr.length>=parseInt(data.npeople)){
+                return res.json({msg:"202"})
+            }
+
+            arr.forEach((user)=>{
+                const userID = user._id.toString();
+                if(userID===uID){
+                    userIsNotThere = false;
+                    return;
+                }
+            })
+            if(userIsNotThere){
+                User.findOne({_id:uID},"username email img",(err,user)=>{
+                    if(err) return console.log(err)
+                    if(user){
+                        arr.push(user);
+                        data.currentlyIn = arr;
+                        data.save();
+                        res.json({msg:"200"})
+                    }
+                })
+            }else{
+                return res.json({msg:"201"})
+            }
+        }
+    })
+}
+
+function removeUserId(uID,roomID){
+    Rooms.findOne({roomID:roomID},(err,data)=>{
+        if(err) return console.log(err);
+        
+        if(data){
+            var arr = data.currentlyIn;
+            var tempArr = [];
+            arr.forEach((user)=>{
+                const userID = user._id.toString();
+                console.log(userID);
+                if(userID!==uID){
+                    tempArr.push(user);
+                }
+            })
+            data.currentlyIn = tempArr;
+            data.save();
+
+        }
+    })
+}
+
+
+
 
 
 //listening to port
@@ -145,89 +236,6 @@ server.listen(PORT,()=>{
 })
 
 
-//User signUp and Login functions
 
-function signUp(req,res){
-    const pass = req.body.pass;
-    bcrypt.hash(pass,parseInt(process.env.SALT_ROUNDS)).then((hash)=>{
-        const user = new User({
-            username:req.body.name,
-            password:hash,
-            email:req.body.email,
-            img:req.body.img
-        })
-        user.save((err)=>{
-            if(err){
-                console.log(err);
-                res.json({msg:"error"})
-            }else{
-                console.log("Saved");
-                res.json({msg:"success"});
-            }
-        })
-    })
-}
 
-function login(req,res){
-    const uname = req.body.uname;
-    const pass = req.body.pass;
 
-    User.findOne({username:uname},(err,data)=>{
-        if(data){
-            bcrypt.compare(pass,data.password).then((result)=>{
-                if(result){
-                    console.log("logged in");
-                    const atoken = generateAccessToken(data);
-                    const rtoken = generateRefreshToken(data);
-                    res.json({msg:"Logged",atoken:atoken,rtoken:rtoken,uname:data.username,img:data.img})
-                }else{
-                    console.log("Password is wrong");
-                    res.json({msg:"Wrong password"});
-                }
-            })
-        }else{
-            console.log("User not exist");
-            res.json({msg:"user not exist"})
-        }
-    })
-}
-
-//JWT generate
-
-function generateAccessToken(user){
-    const accessToken = jwt.sign({
-        username:user.username,
-        email:user.email
-    },process.env.ACCESS_TOKEN,{expiresIn:"30m"})
-
-    return accessToken;
-}
-
-function generateRefreshToken(user){
-    const refershToken = jwt.sign({
-        username:user.username,
-        email:user.email
-    },process.env.REFRESH_TOKEN);
-
-    const token = new Tokens({
-        rToken:refershToken
-    })
-    token.save();
-    return refershToken;
-}
-
-function authenticateJWT(req,res,next){
-    const authHeader = req.headers["authorization"];
-    const token = authHeader.slice(7);
-    if(token==null) return res.json({msg:"Token empty"});
-    jwt.verify(token,process.env.ACCESS_TOKEN,(err,user)=>{
-        if(err) {
-            console.log(err);
-            return res.json({msg:"Token expired"})
-        }
-       
-        req.user=user
-        console.log("auth success");
-        next();
-    })
-}

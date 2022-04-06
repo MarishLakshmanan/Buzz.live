@@ -1,0 +1,20 @@
+#youtube-search{
+    margin: 0;
+    overflow-y:scroll;
+    height: 100%;
+    overflow-x:"hidden"
+}
+
+#youtube-search form{
+    display: flex;
+}
+
+#youtube-search form input{
+    width: 80%;
+    padding:10px;
+}
+
+#searchResults{
+    display: grid;
+    padding: 0 20px 0;
+}

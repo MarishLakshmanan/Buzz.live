@@ -1,0 +1,39 @@
+.toast-container{
+    width: 400px;
+    height: auto;
+    position:absolute;
+    background-color: rgb(221, 221, 0);
+    padding: 10px;
+    box-sizing:border-box;
+    z-index: 90;
+    bottom: 30px;
+    left: 30px;
+    border-radius: 10px;
+    border: 5px solid rgb(187, 187, 4);
+    box-shadow: 0 5px 10px black,inset 0 5px 10px black;
+    animation-name: toast;
+    animation-duration: 1s;
+}
+
+.toast-container h3{
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+
+@keyframes toast{
+    0%{
+        left: -20%;
+    }
+    100%{
+        left: 30px;
+    }
+}
+
+@media screen and (max-width:600px) {
+    .toast-container{
+        left: 10px;
+        width: 350px;
+    }
+}

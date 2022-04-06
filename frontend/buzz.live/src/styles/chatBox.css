@@ -1,0 +1,33 @@
+.chatBox-container{
+    height: 100%;
+}
+
+#chat-message-container{
+    height: 92%;
+    background-color:rgb(243, 215, 215);
+    
+}
+
+p:nth-child(1){
+   margin-top: 0;
+}
+
+.chatBox-container form{
+    height: 8%;
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+.chatBox-container form input{
+    width: 80%;
+    height: 90%;
+    font-size: 16px;
+}
+
+.chatBox-container form button{
+    width: 20%;
+    cursor: pointer;
+    background-color: black;
+    border: 0;
+}

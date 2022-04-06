@@ -1,36 +1,41 @@
 import axios from "axios"
 
-function checkAuth(nav){
+function checkAuth(nav,setAuthenticated){
     const atoken =  localStorage.getItem("atoken");
         const rtoken = localStorage.getItem("rtoken")
         if(atoken){
-            axios.get("http://localhost:5000/",{headers : {"authorization" : `Bearer ${atoken}`},crossdomain:true}).then((res)=>{
+            axios.get(process.env.REACT_APP_BACKEND_API+"/token",{headers : {"authorization" : `Bearer ${atoken}`},crossdomain:true}).then((res)=>{
                 if(res.data.msg!=="hola"){
                     if(rtoken){
-                        axios.get("http://localhost:5000/token",{headers:{"authorization":`Bearer ${rtoken}`,crossdomain:true}}).then((res)=>{
+                        axios.get(process.env.REACT_APP_BACKEND_API+"/checkToken",{headers:{"authorization":`Bearer ${rtoken}`,crossdomain:true}}).then((res)=>{
                             localStorage.setItem("atoken",res.data.atoken);
                             console.log("Stored again");
+                            setAuthenticated(true);
                         });
                     }else{
-                       nav("/login");
+                       //nav("/login");
                        console.log("Go to login");
+                       setAuthenticated(false)
                     }
                 }else{
                     console.log(res.data.user);
+                    setAuthenticated(true)
                 }
             })
         }else{
-           nav("/login");
+           //nav("/login");
            console.log("Go to login");
+           setAuthenticated(false)
         }
 }
 
-function logout(nav){
+function logout(nav,setAuthenticated){
     const rtoken =  localStorage.getItem("rtoken");
     localStorage.clear();
-    axios.get("http://localhost:5000/logout",{headers :{"authorization" : `Bearer ${rtoken}`}}).then((res)=>{
+    axios.get(process.env.REACT_APP_BACKEND_API+"/logout",{headers :{"authorization" : `Bearer ${rtoken}`}}).then((res)=>{
         console.log("Logged out");
-        nav("/login",{replace:true});
+        setAuthenticated(false)
+        nav("/",{replace:true});
 
     })
     

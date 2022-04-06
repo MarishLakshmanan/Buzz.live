@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const user = require("../models/UserModel")
 
 const roomSchema = new mongoose.Schema({
     title:String,
@@ -7,7 +8,8 @@ const roomSchema = new mongoose.Schema({
     lang:String,
     img:String,
     roomID:String,
-    currentlyIn:[String]
+    currentlyIn:[user.schema],
+    host:String
 })
 
 const Room = new mongoose.model("room",roomSchema);

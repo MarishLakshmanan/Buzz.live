@@ -1,0 +1,106 @@
+
+
+.modal-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .8);
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+}
+
+.modal-container h1{
+    color:  #DA0037;
+    margin-top: 30px;
+}
+
+.modal-container form{
+    width: 30%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+    position: absolute;
+    border-radius: 10px;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    animation-name: fromTop;
+    animation-duration: 1.5s;
+}
+
+.modal-container form input{
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 15px;
+    margin: 10px 0 10px 0;
+}
+
+.modal-container form textarea{
+    padding: 10px;
+    border-radius: 10px;
+    resize: none;
+    font-family: "Hoppins","san-serif";
+    font-size: 16px;
+}
+
+.modal-container form div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.modal-container form input[type="file"]{
+    display: none;
+}
+
+.modal-container form label{
+    margin: 15px 0 15px 0;
+    background-color: #DA0037;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    width: 150px;
+    border-radius: 20px;
+    padding: 10px;
+    
+}
+
+.modal-container form button{
+    margin: 15px 0 15px 0;
+    background-color: #DA0037;
+    color: white;
+    border-radius: 20px;
+    padding: 10px;
+    font-family: "Poppins";
+    cursor: pointer;
+}
+
+.modal-container form p{
+    font-size: 20px;
+    text-align: right;
+    cursor: pointer;
+    width: 30px;
+    position: absolute;
+    right: 5%;
+}
+
+
+@media screen and (max-width:1353px){
+
+    .modal-container form div{
+        flex-direction: column;
+    }
+
+    .modal-container form{
+        width: 300px;
+    }
+}
+
+

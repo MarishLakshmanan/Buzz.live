@@ -1,0 +1,264 @@
+body{
+    margin: 0;
+    background-color: #fff;
+    font-family: "Poppins","san-serif";
+    background: url("../resources/289374.jpg") repeat center center fixed;
+}
+
+
+/* header section */
+#header{
+    display: flex;
+    font-family: 'Poppins', sans-serif;
+    font-style: bold;
+    font-size: 20px;
+    margin-left: 80px;
+}
+
+#header span{
+    width: auto;
+}
+
+#header span h1{
+    margin-bottom: 0;
+    margin-right: 10px;
+}
+
+#header-cross{
+    position: relative;
+    top: 35px;
+    font-size: 35px;
+    font-family: sans-serif;
+    font-weight: 100;
+}
+
+#header span span{
+    display: flex;
+    position: relative;
+    bottom: 20px;
+    color: #DA0037;
+    font-size: 35px;
+    width: inherit;
+}
+
+#header span span hr{
+    height: 5px;
+    width: calc(100% + 20px);
+    border-radius: 6px;
+    background-color: #DA0037;
+    margin: 0;
+}
+
+#header span span span{
+    position: relative;
+    bottom: 30px;
+}
+
+
+
+/* body section */
+section{
+    display: flex;
+}
+
+.nav{
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    z-index: 2;
+    height: 420px;
+    background-color: rgba(0,0, 0, .8);
+    align-items: center;
+    border-right: 5px solid black;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    justify-content: space-around;
+    
+}
+
+.nav li{
+    position: relative;
+    height: 35px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+/* main rooms container */
+
+.main-rooms-container{
+    width: 100%;
+    position: relative;
+}
+
+#rooms-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 3% 5% 3%;
+    justify-content:space-evenly;
+}
+
+.create-btn{
+    background-color: #DA0037;
+    border-radius: 60px;
+    width: 150px;
+    height: 50px;
+    font-family: "Poppins","san-serif";
+    font-weight: 800;
+    border: 0;
+    color: white;
+    font-size: 16px;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    border: 3px solid #fd0240;
+    box-shadow: 0 5px 10px black, inset 0 5px 10px black;
+    z-index: 3;
+    
+}
+
+#logout-btn{
+    position: absolute;
+    background-color: rgba(0,0, 0, .8);
+    padding: 10px;
+    border: 0;
+    top: 35px;
+    right: 50px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+
+.illustrator-container{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    border: 0;
+}
+
+.illustrator-container video{
+    width: 100%;
+    height: 100%;
+}
+
+.illustrator-container p{
+    position: absolute;
+    bottom: 10px;
+    left: 5px;
+    right: 5px;
+}
+
+.about-container{
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px  120px;
+    margin-top: 20px;
+}
+
+.about-container div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.about-container div img{
+    width: 200px;
+    height: auto;
+    border-radius: 50px;
+    box-shadow: 0 5px 10px black;
+    border: 5px solid black;
+    object-fit: contain;
+}
+
+@media screen and (max-width:1270px){
+    .illustrator-container{
+        width: 610px;
+    }
+}
+
+@media screen and (max-width:960px){
+    body{
+        margin-bottom: 30%;
+    }
+    .nav{
+        margin: 0;
+        position: fixed;
+        bottom: -1px;
+        left: 0;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        padding: 0;
+        height: 10%;
+        align-items: center;
+    }
+
+    .nav li{
+        position: relative;
+        height: 35px;
+        margin: 0;
+    }
+}
+
+@media screen and (max-width:816px){
+    #rooms-container{
+        align-content: center;
+        flex-direction: column;
+        padding-bottom: 100px;
+    }
+
+    .about-container div{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .about-container span{
+        width: 250px;
+        height: auto;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width:615px) {
+
+    #header{
+        justify-content: center;   
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #logout-btn{
+        top:25px;
+        right:20px
+    }
+
+    .illustrator-container{
+        position: relative;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: 60vh;
+    }
+    
+}
+
+@keyframes fromTop{
+    0%{
+        top: -50%;
+    }
+}
+
+@keyframes fromBottom{
+    0%{
+        left:-100%
+    }
+}
